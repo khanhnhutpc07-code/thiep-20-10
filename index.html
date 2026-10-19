@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffe6ef">
+  <title>Gửi em — 20/10 yêu thương</title>
+  <style>
+    :root {
+      --pink: #f26b9b;
+      --deep: #9e315f;
+      --cream: #fff8f5;
+      --ink: #6f354d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: grid;
+      place-items: center;
+      padding: 28px 16px;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at 12% 15%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 85% 28%, #fff8 0 3px, transparent 4px),
+        linear-gradient(135deg, #ffeaf1, #ffd0e0 48%, #fff2e9);
+      background-size: 70px 70px, 95px 95px, auto;
+    }
+    .scene { width: min(100%, 760px); text-align: center; position: relative; }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #a64a70;
+      font: 700 12px/1.4 Arial, sans-serif;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0 0 8px; color: var(--deep); font-size: clamp(28px, 5vw, 44px); }
+    .intro { margin: 0 auto 28px; max-width: 500px; line-height: 1.65; }
+    .stage { perspective: 1200px; min-height: 350px; display: grid; place-items: center; }
+    .envelope {
+      width: min(86vw, 440px);
+      height: 270px;
+      position: relative;
+      filter: drop-shadow(0 22px 22px #9e315f26);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform .7s ease;
+      outline: none;
+    }
+    .envelope:focus-visible { outline: 3px solid #9e315f; outline-offset: 8px; border-radius: 12px; }
+    .envelope-back {
+      position: absolute; inset: 0;
+      border-radius: 12px;
+      background: #f5a8c2;
+      border: 1px solid #e98eae;
+    }
+    .letter {
+      position: absolute;
+      left: 6%; width: 88%; bottom: 12px; height: 235px;
+      padding: 23px 22px;
+      border-radius: 9px;
+      background: var(--cream);
+      box-shadow: 0 5px 18px #8e31521a;
+      display: flex; flex-direction: column; justify-content: center;
+      transition: transform 1s cubic-bezier(.2,.75,.2,1), bottom 1s ease;
+      z-index: 2;
+    }
+    .letter h2 { font-size: 25px; margin: 0 0 10px; color: #c44e7c; }
+    .letter p { margin: 5px 0; font-size: 15px; line-height: 1.6; }
+    .front {
+      position: absolute; inset: 0;
+      background: #f7b6cb;
+      clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+      border-radius: 0 0 12px 12px;
+      z-index: 4;
+    }
+    .flap {
+      position: absolute; inset: 0;
+      background: #ec8fb0;
+      clip-path: polygon(0 0, 100% 0, 50% 62%);
+      transform-origin: top center;
+      transition: transform .8s ease;
+      z-index: 5;
+      backface-visibility: hidden;
+    }
+    .seal {
+      position: absolute; z-index: 6;
+      left: 50%; top: 56%; transform: translate(-50%, -50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: white; font: 26px Arial, sans-serif;
+      background: linear-gradient(145deg, #d94d80, #a92f61);
+      box-shadow: 0 5px 12px #8e31523b;
+      transition: opacity .3s ease;
+    }
+    .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+    .envelope.open .letter { transform: translateY(-145px); bottom: 20px; transition-delay: .35s; }
+    .envelope.open .seal { opacity: 0; }
+    .envelope.open { cursor: default; }
+    .hint { font: 13px Arial, sans-serif; color: #a34c70; margin-top: 8px; }
+    .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 22px 0 12px; }
+    button {
+      border: 0; border-radius: 999px; padding: 12px 19px;
+      color: white; background: linear-gradient(135deg, #d94d80, #a92f61);
+      box-shadow: 0 6px 15px #a92f612b;
+      cursor: pointer; font: 700 14px Arial, sans-serif;
+      transition: transform .2s, box-shadow .2s;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 9px 20px #a92f6135; }
+    button.secondary { background: #fff8f5; color: #a43b68; border: 1px solid #f0b4ca; }
+    .personalize {
+      max-width: 440px; margin: 18px auto 0; padding: 15px;
+      border: 1px solid #f3bfd1; border-radius: 16px;
+      background: #fff9f7b8; text-align: left;
+    }
+    .personalize label { display: block; font: 700 12px Arial, sans-serif; margin: 0 0 6px; }
+    .personalize input {
+      width: 100%; border: 1px solid #e7a8c0; border-radius: 9px;
+      padding: 10px 12px; background: #fff; color: var(--ink); font-size: 15px;
+    }
+    .personalize small { display: block; margin-top: 7px; color: #9c6379; line-height: 1.5; }
+    .footer { margin-top: 24px; font: 12px Arial, sans-serif; color: #a45b79; }
+    .petal {
+      position: fixed; top: -35px; z-index: 10; pointer-events: none;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translate3d(var(--drift), 110vh, 0) rotate(540deg); opacity: 0; }
+    }
+    @media (max-width: 480px) {
+      .stage { min-height: 320px; }
+      .envelope { height: 230px; }
+      .letter { height: 205px; padding: 17px 15px; }
+      .letter h2 { font-size: 21px; }
+      .letter p { font-size: 13px; }
+      .envelope.open .letter { transform: translateY(-115px); }
+      .front { clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene">
+    <p class="eyebrow">A little letter, just for you</p>
+    <h1>Gửi em, người đặc biệt 💗</h1>
+    <p class="intro">Có một điều dễ thương anh muốn gửi đến em nhân ngày 20/10.<br>Chạm vào phong thư để mở món quà nhỏ này nhé.</p>
+
+    <section class="stage" aria-label="Phong thư 3D">
+      <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Mở phong thư">
+        <div class="envelope-back"></div>
+        <article class="letter">
+          <h2>Chúc mừng 20/10 🌷</h2>
+          <p id="greeting">Gửi em yêu,</p>
+          <p>Chúc em luôn vui vẻ, bình an và được yêu thương thật nhiều. Mong những điều dịu dàng nhất sẽ tìm đến em, không chỉ hôm nay mà trong mọi ngày phía trước.</p>
+          <p>Cảm ơn em vì đã làm thế giới này trở nên đáng yêu hơn. 💖</p>
+          <p style="font-style:italic; color:#b34b77">Thương em thật nhiều!</p>
+        </article>
+        <div class="front"></div>
+        <div class="flap"></div>
+        <div class="seal">♥</div>
+      </div>
+    </section>
+    <p class="hint" id="hint">Nhấn vào phong thư để mở 💌</p>
+
+    <div class="actions">
+      <button id="openBtn">Mở thiệp 💌</button>
+      <button class="secondary" id="musicBtn">♫ Bật nhạc</button>
+      <button class="secondary" id="resetBtn">Đóng thiệp ↺</button>
+    </div>
+
+    <section class="personalize">
+      <label for="nameInput">Đổi cách xưng hô / tên người nhận</label>
+      <input id="nameInput" type="text" maxlength="40" placeholder="Ví dụ: Gửi bé yêu,">
+      <small>Nhập tên hoặc cách gọi bạn muốn. Thay đổi sẽ hiện ngay trên thiệp.</small>
+    </section>
+    <p class="footer">Được làm bằng HTML · CSS · JavaScript, gửi kèm một chút yêu thương ✨</p>
+  </main>
+
+  <script>
+    const envelope = document.getElementById("envelope");
+    const hint = document.getElementById("hint");
+    const greeting = document.getElementById("greeting");
+    const nameInput = document.getElementById("nameInput");
+    const openBtn = document.getElementById("openBtn");
+    const musicBtn = document.getElementById("musicBtn");
+    let audioContext = null;
+    let musicTimer = null;
+    let noteIndex = 0;
+
+    function openCard() {
+      if (envelope.classList.contains("open")) return;
+      envelope.classList.add("open");
+      hint.textContent = "Một lời chúc nhỏ dành riêng cho em 💗";
+      createPetals();
+    }
+
+    function closeCard() {
+      envelope.classList.remove("open");
+      hint.textContent = "Nhấn vào phong thư để mở 💌";
+    }
+
+    envelope.addEventListener("click", openCard);
+    envelope.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCard();
+      }
+    });
+    openBtn.addEventListener("click", openCard);
+    document.getElementById("resetBtn").addEventListener("click", closeCard);
+
+    nameInput.addEventListener("input", () => {
+      const name = nameInput.value.trim();
+      greeting.textContent = name ? `Gửi ${name.replace(/[,،]+$/g, "")},` : "Gửi em yêu,";
+    });
+
+    function createPetals() {
+      const symbols = ["🌸", "💗", "🌷", "✨"];
+      for (let i = 0; i < 24; i++) {
+        const petal = document.createElement("span");
+        petal.className = "petal";
+        petal.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        petal.style.left = Math.random() * 100 + "vw";
+        petal.style.fontSize = (15 + Math.random() * 16) + "px";
+        petal.style.setProperty("--drift", (Math.random() * 150 - 75) + "px");
+        petal.style.animationDuration = (3.5 + Math.random() * 3.5) + "s";
+        document.body.appendChild(petal);
+        petal.addEventListener("animationend", () => petal.remove());
+      }
+    }
+
+    // Tạo giai điệu nhẹ bằng Web Audio API, không cần tải file nhạc ngoài.
+    function playNote(frequency, duration, startTime, volume = 0.045) {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration + 0.03);
+    }
+
+    function musicStep() {
+      if (!audioContext) return;
+      const melody = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 783.99, 698.46,
+                      523.25, 659.25, 880.00, 783.99, 698.46, 659.25, 587.33, 523.25];
+      const now = audioContext.currentTime;
+      playNote(melody[noteIndex % melody.length], 0.48, now);
+      if (noteIndex % 4 === 0) playNote([261.63, 329.63, 392.00, 349.23][(noteIndex / 4) % 4], 0.8, now, 0.018);
+      noteIndex++;
+    }
+
+    async function toggleMusic() {
+      if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+        musicBtn.textContent = "♫ Bật nhạc";
+        if (audioContext) await audioContext.suspend();
+        return;
+      }
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) {
+        hint.textContent = "Trình duyệt này chưa hỗ trợ nhạc tự tạo. Hãy thử Chrome hoặc Edge.";
+        return;
+      }
+      audioContext = audioContext || new AudioContextClass();
+      await audioContext.resume();
+      musicStep();
+      musicTimer = setInterval(musicStep, 520);
+      musicBtn.textContent = "♫ Tắt nhạc";
+    }
+    musicBtn.addEventListener("click", toggleMusic);
+  </script>
+</body>
+</html>
